@@ -122,7 +122,7 @@ void playTone(int frequency, int duration);
 void sendTrialSignal(int numPulses);
 void lockout();
 int positionShuffle();
-void checkbuttons();
+//void checkbuttons();
 void startup();
 void extend(int selection, bool updateDisplayDuringExtend = false, unsigned long* toneStartTime = nullptr, unsigned long toneDuration = 0);
 void retract();
@@ -151,7 +151,7 @@ void setup() {
   pinMode(BUTTON_B, INPUT_PULLUP);
   pinMode(4, INPUT);
   attachInterrupt(digitalPinToInterrupt(4), lickISR, RISING);
-  pinMode(5, OUTPUT);    
+  pinMode(5, INPUT);    
   digitalWrite(5, LOW);
   pinMode(1, OUTPUT);
   digitalWrite(1, LOW);
