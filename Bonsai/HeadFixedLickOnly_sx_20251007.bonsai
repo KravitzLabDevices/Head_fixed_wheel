@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.8.5"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:cv="clr-namespace:Bonsai.Vision;assembly=Bonsai.Vision"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:vid="clr-namespace:Bonsai.Video;assembly=Bonsai.Video"
+                 xmlns:p1="clr-namespace:Bonsai.Mightex;assembly=Mightex.Cam"
+                 xmlns:ard="clr-namespace:Bonsai.Arduino;assembly=Bonsai.Arduino"
+                 xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
+                 xmlns:io="clr-namespace:Bonsai.IO;assembly=Bonsai.System"
+                 xmlns:wie="clr-namespace:Bonsai.Windows.Input;assembly=Bonsai.Windows.Input"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="cv:CameraCapture">
+            <cv:Index>0</cv:Index>
+            <cv:CaptureProperties />
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timer">
+          <rx:DueTime>PT0S</rx:DueTime>
+          <rx:Period>PT0.015S</rx:Period>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="vid:VideoCaptureDevice">
+            <vid:Index>0</vid:Index>
+            <vid:Format>
+              <vid:FrameSize>
+                <vid:Width>640</vid:Width>
+                <vid:Height>360</vid:Height>
+              </vid:FrameSize>
+              <vid:AverageFrameRate>30</vid:AverageFrameRate>
+              <vid:MaximumFrameRate>30</vid:MaximumFrameRate>
+              <vid:BitCount>24</vid:BitCount>
+            </vid:Format>
+            <vid:CaptureProperties />
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="p1:SSBufCam">
+            <p1:CameraIndex>0</p1:CameraIndex>
+            <p1:CameraWorkMode>NormalMode</p1:CameraWorkMode>
+            <p1:FrameSize_Col>0</p1:FrameSize_Col>
+            <p1:FrameResolType>FullResolution</p1:FrameResolType>
+            <p1:FrameBWMode>false</p1:FrameBWMode>
+            <p1:YPOS>0</p1:YPOS>
+            <p1:FrameTime>5000</p1:FrameTime>
+            <p1:Exposuretime>1000</p1:Exposuretime>
+            <p1:Gain>1</p1:Gain>
+            <p1:Gamma>1</p1:Gamma>
+            <p1:Contrast>100</p1:Contrast>
+            <p1:Bright>100</p1:Bright>
+            <p1:Sharp>NoSharp</p1:Sharp>
+            <p1:Horizontal>OFF</p1:Horizontal>
+            <p1:Vertical>OFF</p1:Vertical>
+            <p1:SavePara />
+            <p1:LoadPara />
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timestamp" />
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Timestamp.TimeOfDay.TotalSeconds</Selector>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="ard:DigitalInput">
+            <ard:PortName>COM4</ard:PortName>
+            <ard:Pin>8</ard:Pin>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="ard:DigitalInput">
+          <ard:PortName>COM4</ard:PortName>
+          <ard:Pin>10</ard:Pin>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="ard:DigitalInput">
+          <ard:PortName>COM4</ard:PortName>
+          <ard:Pin>11</ard:Pin>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="ard:DigitalInput">
+          <ard:PortName>COM4</ard:PortName>
+          <ard:Pin>12</ard:Pin>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="ard:DigitalInput">
+          <ard:PortName>COM4</ard:PortName>
+          <ard:Pin>13</ard:Pin>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="ard:DigitalInput">
+            <ard:PortName>COM4</ard:PortName>
+            <ard:Pin>5</ard:Pin>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:CombineLatest" />
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="scr:ExpressionTransform">
+          <scr:Expression>new(
+  Item1 as Time,
+  Item2 as Lick,
+  Item3 as Puff,
+  Item4 as Wheel,
+  Item5 as Tone,
+  Item6 as StrobeOut
+)</scr:Expression>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="io:CsvWriter">
+          <io:FileName>Suzy\c5011N_PVHangya_session_.csv</io:FileName>
+          <io:Append>false</io:Append>
+          <io:Overwrite>false</io:Overwrite>
+          <io:Suffix>Timestamp</io:Suffix>
+          <io:IncludeHeader>true</io:IncludeHeader>
+          <io:Selector />
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="cv:SaveImage">
+            <cv:FileName>BehaviorFaceMap\Justin_Caspase\c7F0001_selfpaced_session1.tif</cv:FileName>
+            <cv:Suffix>FileCount</cv:Suffix>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="wie:KeyDown">
+            <wie:Filter>F1</wie:Filter>
+            <wie:SuppressRepetitions>true</wie:SuppressRepetitions>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="scr:ExpressionTransform">
+          <scr:Expression>true</scr:Expression>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="ard:DigitalOutput">
+            <ard:PortName>COM4</ard:PortName>
+            <ard:Pin>6</ard:Pin>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="wie:KeyDown">
+            <wie:Filter>F2</wie:Filter>
+            <wie:SuppressRepetitions>true</wie:SuppressRepetitions>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="scr:ExpressionTransform">
+          <scr:Expression>false</scr:Expression>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="ard:DigitalOutput">
+            <ard:PortName>COM4</ard:PortName>
+            <ard:Pin>6</ard:Pin>
+          </Combinator>
+        </Builder>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="4" Label="Source1" />
+      <Edge From="1" To="4" Label="Source2" />
+      <Edge From="2" To="4" Label="Source3" />
+      <Edge From="3" To="4" Label="Source4" />
+      <Edge From="3" To="15" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="5" To="12" Label="Source1" />
+      <Edge From="6" To="12" Label="Source2" />
+      <Edge From="7" To="12" Label="Source3" />
+      <Edge From="8" To="12" Label="Source4" />
+      <Edge From="9" To="12" Label="Source5" />
+      <Edge From="10" To="12" Label="Source6" />
+      <Edge From="11" To="12" Label="Source7" />
+      <Edge From="12" To="13" Label="Source1" />
+      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="16" To="17" Label="Source1" />
+      <Edge From="17" To="18" Label="Source1" />
+      <Edge From="19" To="20" Label="Source1" />
+      <Edge From="20" To="21" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>
